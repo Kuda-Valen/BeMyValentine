@@ -25,17 +25,17 @@
         }
 
         .critical-bg {
-            background: #450a0a !important;
+            background: #7f1d1d !important;
         }
 
         .shake {
-            animation: shake 0.1s ease-in-out infinite;
+            animation: shake 0.15s ease-in-out infinite;
         }
 
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
         }
 
         .step-content { display: none; }
@@ -43,10 +43,14 @@
 
         #yesBtn { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
-        /* Custom scrollbar for small height screens */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .btn-glow {
+            box-shadow: 0 0 20px rgba(236, 72, 153, 0.4);
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
@@ -67,16 +71,16 @@
             </div>
             <div class="space-y-2">
                 <h2 class="text-2xl font-bold tracking-widest uppercase text-white">Security Clearance</h2>
-                <p class="text-xs text-gray-400">IDENTITY VERIFICATION REQUIRED</p>
+                <p class="text-xs text-gray-400 font-mono tracking-tighter">ID: MEMORY_AUTH_01</p>
             </div>
             
-            <p class="text-sm text-gray-300 leading-relaxed">Please upload our favorite photo together. This memory acts as the primary decryption key for this session.</p>
+            <p class="text-sm text-gray-300 leading-relaxed px-4">This session is encrypted. To proceed, please upload our favorite photo together as the decryption key.</p>
             
             <label class="group relative flex flex-col items-center justify-center w-full h-56 border-2 border-dashed border-white/20 rounded-3xl cursor-pointer hover:border-pink-500/50 hover:bg-white/5 transition-all overflow-hidden">
                 <div id="preview-container" class="hidden absolute inset-0 z-10">
                     <img id="photo-preview" src="" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <p class="text-white text-xs font-bold uppercase">Change Photo</p>
+                        <p class="text-white text-xs font-bold uppercase">Update Key</p>
                     </div>
                 </div>
                 <div id="upload-prompt" class="flex flex-col items-center space-y-3">
@@ -94,25 +98,25 @@
         <!-- STEP 2: QUIZ -->
         <div id="step-quiz" class="step-content flex-col items-center text-center space-y-6">
             <i data-lucide="shield-check" class="w-12 h-12 text-pink-400"></i>
-            <h2 class="text-2xl font-light tracking-widest uppercase text-white">Secondary Auth</h2>
+            <h2 class="text-2xl font-light tracking-widest uppercase text-white">Integrity Check</h2>
             
             <div class="w-full space-y-5 text-left">
                 <div class="space-y-1">
                     <label class="text-[10px] font-bold uppercase tracking-[0.2em] text-pink-400 ml-1">First Kiss Location</label>
-                    <input type="text" id="q-loc" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white text-sm focus:outline-none focus:border-pink-500 focus:bg-white/10 transition-all" placeholder="Where did it happen?">
+                    <input type="text" id="q-loc" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white text-sm focus:outline-none focus:border-pink-500 focus:bg-white/10 transition-all" placeholder="Where was it?">
                 </div>
                 <div class="space-y-1">
                     <label class="text-[10px] font-bold uppercase tracking-[0.2em] text-pink-400 ml-1">First Kiss Date</label>
-                    <input type="text" id="q-date" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white text-sm focus:outline-none focus:border-pink-500 focus:bg-white/10 transition-all" placeholder="When exactly?">
+                    <input type="date" id="q-date" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white text-sm focus:outline-none focus:border-pink-500 focus:bg-white/10 transition-all">
                 </div>
                 <div class="space-y-1">
-                    <label class="text-[10px] font-bold uppercase tracking-[0.2em] text-pink-400 ml-1">Family Goals</label>
-                    <input type="text" id="q-kids" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white text-sm focus:outline-none focus:border-pink-500 focus:bg-white/10 transition-all" placeholder="How many kids do I want?">
+                    <label class="text-[10px] font-bold uppercase tracking-[0.2em] text-pink-400 ml-1">Future Family</label>
+                    <input type="number" id="q-kids" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white text-sm focus:outline-none focus:border-pink-500 focus:bg-white/10 transition-all" placeholder="How many kids do I want?">
                 </div>
             </div>
 
-            <button onclick="goToValentine()" class="w-full py-4 bg-pink-600 hover:bg-pink-500 rounded-full font-bold uppercase tracking-widest text-white shadow-[0_0_30px_rgba(219,39,119,0.4)] transition-all active:scale-95">
-                Verify Integrity
+            <button onclick="validateQuiz()" class="w-full py-4 bg-pink-600 hover:bg-pink-500 rounded-full font-bold uppercase tracking-widest text-white shadow-[0_0_30px_rgba(219,39,119,0.4)] transition-all active:scale-95">
+                Verify Identity
             </button>
         </div>
 
@@ -128,7 +132,7 @@
                 <button id="yesBtn" onclick="celebrate()" class="px-12 py-4 bg-pink-500 rounded-full font-black text-white shadow-[0_0_30px_rgba(236,72,153,0.6)] hover:bg-pink-400 z-50 transition-transform">
                     YES
                 </button>
-                <button id="noBtn" onmouseover="moveNo()" onclick="triggerError()" class="px-10 py-4 bg-white/10 border border-white/20 rounded-full font-bold text-white transition-all duration-200">
+                <button id="noBtn" onclick="triggerError('INVALID SELECTION DETECTED. SYSTEM OVERRIDE INITIATED.')" class="px-10 py-4 bg-white/10 border border-white/20 rounded-full font-bold text-white transition-all duration-200">
                     NO
                 </button>
             </div>
@@ -143,17 +147,29 @@
                 </div>
             </div>
             <h1 class="text-4xl font-black text-white tracking-tighter">PROTOCOL GRANTED</h1>
-            <p class="text-white/70 font-medium tracking-widest uppercase text-xs">Access fully unlocked. I'll see you on the 14th! 💖</p>
+            <p class="text-white/70 font-medium tracking-widest uppercase text-xs">Access fully unlocked.</p>
+            <p class="text-white text-lg font-light italic leading-relaxed px-4">
+                "I wish I could see you this Valentine's... even though you're across the world, my heart is right where you are."
+            </p>
+            
+            <!-- DEBUG LOGS FOR YOU -->
+            <div id="debug-log" class="mt-8 pt-4 border-t border-white/10 w-full text-[10px] font-mono text-white/30 text-left overflow-hidden">
+                Status: Awaiting Trigger...
+            </div>
         </div>
     </div>
 
     <!-- ERROR OVERLAY -->
-    <div id="error-overlay" class="fixed inset-0 z-[100] hidden items-center justify-center bg-red-950/60 backdrop-blur-xl p-4">
-        <div class="bg-white p-10 max-w-xs w-full border-[6px] border-red-600 text-red-600 text-center shadow-[0_0_50px_rgba(220,38,38,0.5)]">
-            <i data-lucide="alert-octagon" class="w-16 h-16 mx-auto mb-4 shake"></i>
-            <h3 class="font-black text-3xl mb-2 tracking-tighter italic">FATAL ERROR</h3>
-            <p id="error-msg" class="font-bold text-xs mb-8 uppercase leading-relaxed">System failure: Redirecting to compliance mode.</p>
-            <button onclick="closeError()" class="w-full bg-red-600 text-white py-4 font-black uppercase text-sm tracking-[0.2em] hover:bg-red-700 active:scale-95 transition-all">Retry System</button>
+    <div id="error-overlay" class="fixed inset-0 z-[100] hidden items-center justify-center bg-red-950/80 backdrop-blur-xl p-4">
+        <div class="bg-white p-10 max-w-sm w-full border-[8px] border-red-600 text-red-600 text-center shadow-[0_0_80px_rgba(220,38,38,0.7)] shake">
+            <i data-lucide="alert-octagon" class="w-20 h-20 mx-auto mb-4"></i>
+            <h3 class="font-black text-4xl mb-3 tracking-tighter italic">CRITICAL FAILURE</h3>
+            <p id="error-msg" class="font-bold text-sm mb-8 uppercase leading-tight tracking-tighter">
+                INVALID SELECTION DETECTED. SYSTEM OVERRIDE INITIATED.
+            </p>
+            <button id="error-action-btn" onclick="closeError()" class="w-full bg-red-600 text-white py-5 font-black uppercase text-sm tracking-[0.2em] hover:bg-red-700 active:scale-95 transition-all shadow-lg">
+                RE-ATTEMPT CLEARANCE
+            </button>
         </div>
     </div>
 
@@ -163,7 +179,6 @@
         import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // Your exact Firebase config
         const firebaseConfig = {
             apiKey: "AIzaSyAHTA1_SV4zJHdY7cPxrIFWywYwQ_WJkJo",
             authDomain: "bemyvalentine-28efd.firebaseapp.com",
@@ -182,25 +197,30 @@
         let currentPhoto = null;
         let yesScale = 1;
         let errorCount = 0;
+        let isQuizError = false;
+
         const messages = [
             "Nice try. Try again.",
-            "Access Denied: High levels of affection detected.",
-            "System Error: Redirecting to 'Yes'...",
-            "HEART.EXE NOT RESPONDING: SELECT YES TO REBOOT"
+            "Access Denied: Please rethink your choices.",
+            "System Error: Redirecting to compliance mode...",
+            "HEART.EXE NOT RESPONDING: SELECT 'YES' TO REPAIR"
         ];
 
-        // Initialize Icons
         lucide.createIcons();
 
-        // Step Management
+        function log(msg) {
+            const el = document.getElementById('debug-log');
+            if(el) el.innerText = "Status: " + msg;
+            console.log(msg);
+        }
+
         window.showStep = (stepId) => {
             document.querySelectorAll('.step-content').forEach(s => s.classList.remove('active'));
             const target = document.getElementById('step-' + stepId);
             target.classList.add('active');
-            lucide.createIcons(); // Refresh icons for new step
+            lucide.createIcons();
         };
 
-        // Photo Handling
         const fileInput = document.getElementById('file-input');
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
@@ -214,7 +234,7 @@
                     const btn = document.getElementById('auth-btn');
                     btn.disabled = false;
                     btn.classList.remove('bg-white/5', 'text-white/20', 'cursor-not-allowed');
-                    btn.classList.add('bg-pink-600', 'text-white', 'shadow-[0_0_30px_rgba(219,39,119,0.3)]', 'hover:bg-pink-500');
+                    btn.classList.add('bg-pink-600', 'text-white', 'btn-glow', 'hover:bg-pink-500');
                 };
                 reader.readAsDataURL(file);
             }
@@ -223,19 +243,37 @@
         window.goToQuiz = () => showStep('quiz');
         window.goToValentine = () => showStep('valentine');
 
-        window.moveNo = () => {
-            const btn = document.getElementById('noBtn');
-            const x = Math.random() * (window.innerWidth - btn.offsetWidth);
-            const y = Math.random() * (window.innerHeight - btn.offsetHeight);
-            btn.style.position = 'fixed';
-            btn.style.left = Math.max(10, Math.min(x, window.innerWidth - 100)) + 'px';
-            btn.style.top = Math.max(10, Math.min(y, window.innerHeight - 50)) + 'px';
+        window.validateQuiz = () => {
+            const loc = document.getElementById('q-loc').value.toLowerCase();
+            const date = document.getElementById('q-date').value;
+            const kids = document.getElementById('q-kids').value;
+
+            const keywords = ["car", "uber", "on way", "home"];
+            const hasKeyword = keywords.some(k => loc.includes(k));
+            const isCorrectDate = (date === "2025-04-19");
+            const isCorrectKids = (kids == "5");
+
+            if (!hasKeyword) {
+                isQuizError = true;
+                triggerError("LOCATION MISMATCH: MEMORY DATA CORRUPTED.");
+            } else if (!isCorrectDate) {
+                isQuizError = true;
+                triggerError("DATE ERROR: CHRONOLOGY TAMPERED.");
+            } else if (!isCorrectKids) {
+                isQuizError = true;
+                triggerError("DATA ERROR: UNEXPECTED FAMILY PARAMETERS.");
+            } else {
+                isQuizError = false;
+                window.goToValentine();
+            }
         };
 
-        window.triggerError = () => {
+        window.triggerError = (msg) => {
             document.body.classList.add('critical-bg');
-            document.getElementById('error-overlay').classList.replace('hidden', 'flex');
-            document.getElementById('error-msg').innerText = messages[errorCount % messages.length];
+            const overlay = document.getElementById('error-overlay');
+            overlay.classList.replace('hidden', 'flex');
+            const displayMsg = msg || messages[errorCount % messages.length];
+            document.getElementById('error-msg').innerText = displayMsg;
             errorCount++;
             lucide.createIcons();
         };
@@ -243,30 +281,44 @@
         window.closeError = () => {
             document.body.classList.remove('critical-bg');
             document.getElementById('error-overlay').classList.replace('flex', 'hidden');
-            yesScale += 0.4;
-            document.getElementById('yesBtn').style.transform = `scale(${yesScale})`;
+            if (!isQuizError) {
+                yesScale += 0.6;
+                document.getElementById('yesBtn').style.transform = `scale(${yesScale})`;
+            }
         };
 
         window.celebrate = async () => {
             showStep('success');
-            document.body.style.background = 'linear-gradient(to bottom right, #db2777, #e11d48)';
+            document.body.style.background = 'linear-gradient(to bottom right, #be123c, #881337)';
             
-            // Save Data to Firestore
+            log("Attempting to connect to Firebase...");
+
             try {
-                await signInAnonymously(auth);
-                // Rule 1: Use specific path /artifacts/{appId}/public/data/{collectionName}
-                const path = collection(db, 'artifacts', appId, 'public', 'data', 'responses');
-                await addDoc(path, {
-                    photo_data: currentPhoto,
+                // Wait for auth first
+                const userCredential = await signInAnonymously(auth);
+                const user = userCredential.user;
+                log("Authenticated. UID: " + user.uid);
+                
+                // Collection path MUST match the rules exactly
+                const responsesRef = collection(db, 'artifacts', appId, 'public', 'data', 'responses');
+                
+                log("Saving data to artifacts/valentine-2026/...");
+                
+                const docRef = await addDoc(responsesRef, {
+                    photo_base64: currentPhoto, // This saves the image into the doc
                     answers: {
                         location: document.getElementById('q-loc').value,
                         date: document.getElementById('q-date').value,
                         kids_count: document.getElementById('q-kids').value
                     },
-                    timestamp: new Date().toISOString()
+                    timestamp: new Date().toISOString(),
+                    user_id: user.uid
                 });
+                
+                log("Success! Document ID: " + docRef.id);
             } catch (e) { 
-                console.error("Storage Log:", e); 
+                log("ERROR: " + e.message);
+                console.error("Full Error Object:", e);
             }
         };
     </script>
